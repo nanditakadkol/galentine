@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Galentine?</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #ffc1e3, #e6c9ff);
+      font-family: "Comic Sans MS", "Comic Neue", cursive;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .card {
+      background: #fff;
+      padding: 36px;
+      border-radius: 26px;
+      text-align: center;
+      box-shadow: 0 15px 30px rgba(255, 105, 180, 0.25);
+      position: relative;
+      width: 340px;
+      z-index: 2;
+    }
+
+    h1 {
+      color: #ff5fa2;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #b24cff;
+      font-size: 15px;
+      margin-top: 0;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      font-family: inherit;
+    }
+
+    #yes {
+      background: linear-gradient(135deg, #ff5fa2, #ff8ccf);
+      color: white;
+      font-size: 22px;
+      padding: 20px 42px;
+      margin-top: 24px;
+      box-shadow: 0 8px 18px rgba(255, 95, 162, 0.4);
+    }
+
+    #no {
+      background: #f2e9ff;
+      color: #7a4cff;
+      font-size: 14px;
+      padding: 10px 20px;
+      position: absolute;
+      left: 50%;
+      top: 72%;
+      transform: translateX(-50%);
+    }
+
+    canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div class="card" id="card">
+  <h1>Hi Sriya! 💕</h1>
+  <p>Will you be my Galentine? 💌💅</p>
+  <button id="yes" onclick="finalYes()">OBVIOUSLY YES 💖</button>
+  <button id="no">Nah idk 🙄</button>
+</div>
+
+<script>
+  const noBtn = document.getElementById("no");
+  const yesBtn = document.getElementById("yes");
+
+  let yesScale = 1;
+
+  document.addEventListener("mousemove", (e) => {
+    const rect = noBtn.getBoundingClientRect();
+    const distance = Math.hypot(
+      e.clientX - (rect.left + rect.width / 2),
+      e.clientY - (rect.top + rect.height / 2)
+    );
+
+    if (distance < 120) {
+      moveNo();
+    }
+  });
+
+  function moveNo() {
+    const padding = 20;
+    const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+    const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+
+    noBtn.style.left = Math.random() * maxX + "px";
+    noBtn.style.top = Math.random() * maxY + "px";
+
+    // YES gets extra powerful 💅💗
+    yesScale += 0.08;
+    yesBtn.style.transform = `scale(${yesScale})`;
+  }
+
+  function finalYes() {
+    launchConfetti();
+    document.getElementById("card").innerHTML = `
+      <h1>YAYYYY 💕🎉</h1>
+      <p>Galentine’s secured 💖</p>
+      <p>Love ya (jk) ✨</p>
+    `;
+  }
+
+  /* 💖 CONFETTI 💖 */
+  const canvas = document.getElementById("confetti");
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  let confetti = [];
+
+  function launchConfetti() {
+    confetti = Array.from({ length: 180 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * -canvas.height,
+      r: Math.random() * 6 + 4,
+      d: Math.random() * 5 + 2,
+      color: ["#ff5fa2", "#ff8ccf", "#b983ff", "#ffd6f6"][
+        Math.floor(Math.random() * 4)
+      ]
+    }));
+    animateConfetti();
+  }
+
+  function animateConfetti() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    confetti.forEach((c) => {
+      ctx.beginPath();
+      ctx.fillStyle = c.color;
+      ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+      ctx.fill();
+      c.y += c.d;
+    });
+
+    if (confetti.some(c => c.y < canvas.height)) {
+      requestAnimationFrame(animateConfetti);
+    }
+  }
+</script>
+
+</body>
+</html>
